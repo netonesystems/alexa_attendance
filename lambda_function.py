@@ -72,15 +72,20 @@ def get_welcome_response():
 def register_attendance(person, type):
     today = datetime.today()
     date = today.strftime("%Y-%m-%dT%H:%M:%S+0900")
-        
-    table.put_item(
-        Item = {
-            "uuid": str(uuid.uuid1()),
-            "name": person,
-            "type": type,
-            "date": date
-        }
-    )
+            
+    try:
+        res = table.put_item(
+            Item = {
+                "uuid": str(uuid.uuid1()),
+                "name": person,
+                "type": type,
+                "date": date
+            }
+        )
+
+        print(res)
+    except Exception, e:
+        print(e)
 
 def handle_session_end_request():
     card_title = "Session Ended"
@@ -143,17 +148,9 @@ def set_person_in_session(intent, session):
                             type + \
                             "を登録しました。 "
             reprompt_text = None
-            today = datetime.today()
-            date = today.strftime("%Y-%m-%dT%H:%M:%S+0900")
-        
-            table.put_item(
-            Item = {
-                    "uuid": str(uuid.uuid1()),
-                    "name": person,
-                    "type": type,
-                    "date": date
-                }
-            )
+
+            # Add attendance info DynamoDB        
+            register_attendance(person, type)
         else:
             speech_output = person + \
                             "さんの勤怠ですね。" \
@@ -184,6 +181,9 @@ def set_type_in_session(intent, session):
                         "さんの" + type + "を登録しました。 "
             reprompt_text = None
             should_end_session = True
+
+            # Add attendance info DynamoDB        
+            register_attendance(person, type)
         else:
             speech_output = type + \
                             "を登録ですね。" \
