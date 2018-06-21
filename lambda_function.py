@@ -60,11 +60,13 @@ def get_welcome_response():
 
     session_attributes = {}
     card_title = "勤怠システム"
-    speech_output = "勤怠システムでは特定の人の出社、退社時間を記録することができます。" \
-                    "登録したい人の名前または出社、退社どちらを登録したいかもしくはその両方を教えてください。"
+    speech_output = "勤怠システムですね。お名前か勤怠のタイプを教えてください。"
+    #speech_output = "勤怠システムでは特定の人の出社、退社時間を記録することができます。" \
+    #                "登録したい人の名前または出社、退社どちらを登録したいかもしくはその両方を教えてください。"
     # If the user either does not reply to the welcome message or says something
     # that is not understood, they will be prompted again with this text.
-    reprompt_text = "登録したい人の名前または出社、退社どちらを登録したいかもしくはその両方を教えてください。"
+    #reprompt_text = "登録したい人の名前または出社、退社どちらを登録したいかもしくはその両方を教えてください。"
+    reprompt_text = "勤怠システムですね。お名前か勤怠のタイプを教えてください。"
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
