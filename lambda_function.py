@@ -204,7 +204,7 @@ def get_attendance_in_session(intent, session):
         session_attributes = {}
     should_end_session = True
 
-    speech_output = "Webex Teams に出力しました。を登録しました。 "
+    speech_output = "Webex Teams に出力しました。"
     reprompt_text = None
 
     return build_response(session_attributes, build_speechlet_response(
@@ -274,7 +274,6 @@ def lambda_handler(event, context):
     """
     print("event.session.application.applicationId=" +
           event['session']['application']['applicationId'])
-
     """
     Uncomment this if statement and populate with your skill's application ID to
     prevent someone else from configuring a skill that sends requests to this
