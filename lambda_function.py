@@ -106,7 +106,7 @@ def set_attendance_in_session(intent, session):
     user.
     """
 
-    card_title = "勤怠管理"
+    card_title = "勤怠システム"
     session_attributes = {}
     should_end_session = True
 
@@ -129,7 +129,7 @@ def set_attendance_in_session(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 def set_person_in_session(intent, session):
-    card_title = "勤怠管理"
+    card_title = "勤怠システム"
     if session.get('attributes', {}):
         session_attributes = session['attributes']
     else:
@@ -164,7 +164,7 @@ def set_person_in_session(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 def set_type_in_session(intent, session):
-    card_title = "勤怠管理"
+    card_title = "勤怠システム"
     if session.get('attributes', {}):
         session_attributes = session['attributes']
     else:
@@ -196,6 +196,19 @@ def set_type_in_session(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+def get_attendance_in_session(intent, session):
+    card_title = "勤怠システム"
+    if session.get('attributes', {}):
+        session_attributes = session['attributes']
+    else:
+        session_attributes = {}
+    should_end_session = True
+
+    speech_output = "Webex Teams に出力しました。を登録しました。 "
+    reprompt_text = None
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 # --------------- Events ------------------
 
@@ -233,6 +246,8 @@ def on_intent(intent_request, session):
         return set_person_in_session(intent, session)
     elif intent_name == "TypeIntent":
         return set_type_in_session(intent, session)
+    elif intent_name == "OutputIntent":
+               get_attendance_in_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
