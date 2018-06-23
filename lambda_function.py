@@ -42,12 +42,31 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'shouldEndSession': should_end_session
     }
 
+def build_video_response(title, output, source, should_end_session):
+    return {
+        'outputSpeech': {
+            'type': 'SSML',
+            'ssml': '<speak>' + output + '</speak>'
+        },
+        'directives': [
+            {
+                'type': 'VideoApp.Launch',
+                'videoItem': {
+                    'source': source,
+                    'metadata': {
+                        'title': title
+                    }
+                }
+            }
+        ],
+        'souldEndSession': should_end_session
+    }
 
-def build_response(session_attributes, speechlet_response):
+def build_response(session_attributes, response):
     return {
         'version': '1.0',
         'sessionAttributes': session_attributes,
-        'response': speechlet_response
+        'response': response
     }
 
 
