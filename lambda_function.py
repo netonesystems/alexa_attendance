@@ -188,8 +188,7 @@ def set_person_in_session(intent, session):
                 )
             )
         else:
-            speech_output = "{} さんの勤怠ですね。".format(person) \
-                            "勤怠の種類は出社ですか退社ですか?"
+            speech_output = "{} さんの勤怠ですね。勤怠の種類は出社ですか退社ですか?".format(person)
             reprompt_text = "勤怠の種類を教えてください。"
     else:
         speech_output = "もう一度誰の勤怠を登録するか教えてください。"
@@ -228,8 +227,7 @@ def set_type_in_session(intent, session):
                 )
             )
         else:
-            speech_output = "{} を登録ですね。".format(type) \
-                            "誰の勤怠を登録しますか?"
+            speech_output = "{} を登録ですね。誰の勤怠を登録しますか?".format(type)
             reprompt_text = "誰の勤怠を登録するか教えてください。"
     else:
         speech_output = "もう一度勤怠の種類を教えてください。"
