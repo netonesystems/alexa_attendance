@@ -136,12 +136,21 @@ def set_attendance_in_session(intent, session):
         set_attributes(session_attributes, "Person", person)
         set_attributes(session_attributes, "Type", type)
      
+        # Add attendance info DynamoDB        
+        register_attendance(person, type)
+
         speech_output = person + \
                         "さんの" + type + "を登録しました。 "
         reprompt_text = None
 
-        # Add attendance info DynamoDB        
-        register_attendance(person, type)
+        return build_response(
+            session_attributes, build_video_response(
+                card_title,
+                speech_output,
+                "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                should_end_session
+            )
+        )
     else:
         speech_output = "もう一度試してください。"
     return build_response(session_attributes, build_speechlet_response(
@@ -161,17 +170,27 @@ def set_person_in_session(intent, session):
         
         set_attributes(session_attributes, "Person", person)
         
+
         if "Person" in session_attributes and "Type" in session_attributes:
             type = session_attributes["Type"]
             
+            # Add attendance info DynamoDB        
+            register_attendance(person, type)
+
             speech_output = person + \
                             "さんの" + \
                             type + \
                             "を登録しました。 "
             reprompt_text = None
 
-            # Add attendance info DynamoDB        
-            register_attendance(person, type)
+            return build_response(
+                session_attributes, build_video_response(
+                    card_title,
+                    speech_output,
+                    "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                    should_end_session
+                )
+            )
         else:
             speech_output = person + \
                             "さんの勤怠ですね。" \
@@ -198,13 +217,22 @@ def set_type_in_session(intent, session):
         if "Person" in session_attributes and "Type" in session_attributes:
             person = session_attributes["Person"]
             
+            # Add attendance info DynamoDB        
+            register_attendance(person, type)
+
             speech_output = person + \
                         "さんの" + type + "を登録しました。 "
             reprompt_text = None
             should_end_session = True
 
-            # Add attendance info DynamoDB        
-            register_attendance(person, type)
+            return build_response(
+                session_attributes, build_video_response(
+                    card_title,
+                    speech_output,
+                    "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                    should_end_session
+                )
+            )
         else:
             speech_output = type + \
                             "を登録ですね。" \
@@ -266,7 +294,7 @@ def on_intent(intent_request, session):
     elif intent_name == "TypeIntent":
         return set_type_in_session(intent, session)
     elif intent_name == "OutputIntent":
-               get_attendance_in_session(intent, session)
+        return get_attendance_in_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
