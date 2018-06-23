@@ -109,7 +109,7 @@ def register_attendance(person, type):
         print(e)
 
 def handle_session_end_request():
-    card_title = "Session Ended"
+    card_title = "勤怠システム"
     speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
                     "Have a nice day! "
     # Setting this to true ends the session and exits the skill.
@@ -139,8 +139,7 @@ def set_attendance_in_session(intent, session):
         # Add attendance info DynamoDB        
         register_attendance(person, type)
 
-        speech_output = person + \
-                        "さんの" + type + "を登録しました。 "
+        speech_output = "{} さんの {} を登録しました。".format(person, type)
         reprompt_text = None
 
         return build_response(
@@ -177,10 +176,7 @@ def set_person_in_session(intent, session):
             # Add attendance info DynamoDB        
             register_attendance(person, type)
 
-            speech_output = person + \
-                            "さんの" + \
-                            type + \
-                            "を登録しました。 "
+            speech_output = "{} さんの {} を登録しました。".format(person, type)
             reprompt_text = None
 
             return build_response(
@@ -192,8 +188,7 @@ def set_person_in_session(intent, session):
                 )
             )
         else:
-            speech_output = person + \
-                            "さんの勤怠ですね。" \
+            speech_output = "{} さんの勤怠ですね。".format(person) \
                             "勤怠の種類は出社ですか退社ですか?"
             reprompt_text = "勤怠の種類を教えてください。"
     else:
@@ -220,8 +215,7 @@ def set_type_in_session(intent, session):
             # Add attendance info DynamoDB        
             register_attendance(person, type)
 
-            speech_output = person + \
-                        "さんの" + type + "を登録しました。 "
+            speech_output = "{} さんの {} を登録しました。".format(person, type)
             reprompt_text = None
             should_end_session = True
 
@@ -234,8 +228,7 @@ def set_type_in_session(intent, session):
                 )
             )
         else:
-            speech_output = type + \
-                            "を登録ですね。" \
+            speech_output = "{} を登録ですね。".format(type) \
                             "誰の勤怠を登録しますか?"
             reprompt_text = "誰の勤怠を登録するか教えてください。"
     else:
