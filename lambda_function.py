@@ -14,8 +14,11 @@ from __future__ import print_function
 import boto3
 import json
 import uuid
+import csv
 from boto3.dynamodb.conditions import Key, Attr
 from datetime import datetime
+
+import webexteams
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('attendance')
@@ -69,6 +72,19 @@ def build_response(session_attributes, response):
         'response': response
     }
 
+def create_csv(data):
+    f = open('/tmp/atendance.csv', 'wb')
+    writer = csv.writer(f)
+
+    writer.writerow(['名前', 'タイプ', '日時'])
+    for x in data:
+        tmp = x.values()
+        writer.writerow([tmp[3].encode('utf-8'), tmp[1].encode('utf-8'), tmp[0]])
+
+    f.close()
+
+def upload_csv():
+    webexteams.upload_file('勤怠情報です', '/tmp/attendance.csv')
 
 # --------------- Functions that control the skill's behavior ------------------
 
@@ -139,17 +155,24 @@ def set_attendance_in_session(intent, session):
         # Add attendance info DynamoDB        
         register_attendance(person, type)
 
+        # Notify to Webex teams
+        today = datetime.today()
+        date = today.strftime("%m月%d日, %H:%M")
+
+        webexteams.send_message(u"{} さんが {} に {} しました".format(person, date, type))
+
         speech_output = "{} さんの {} を登録しました。".format(person, type)
         reprompt_text = None
 
-        return build_response(
-            session_attributes, build_video_response(
-                card_title,
-                speech_output,
-                "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
-                should_end_session
+        if type == '退社':
+            return build_response(
+                session_attributes, build_video_response(
+                    card_title,
+                    speech_output,
+                    "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                    should_end_session
+                )
             )
-        )
     else:
         speech_output = "もう一度試してください。"
     return build_response(session_attributes, build_speechlet_response(
@@ -176,17 +199,24 @@ def set_person_in_session(intent, session):
             # Add attendance info DynamoDB        
             register_attendance(person, type)
 
+            # Notify to Webex teams
+            today = datetime.today()
+            date = today.strftime("%m月%d日, %H:%M")
+
+            webexteams.send_message(u"{} さんが {} に {} しました".format(person, date, type))
+
             speech_output = "{} さんの {} を登録しました。".format(person, type)
             reprompt_text = None
 
-            return build_response(
-                session_attributes, build_video_response(
-                    card_title,
-                    speech_output,
-                    "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
-                    should_end_session
+            if type == '退社':
+                return build_response(
+                    session_attributes, build_video_response(
+                        card_title,
+                        speech_output,
+                        "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                        should_end_session
+                    )
                 )
-            )
         else:
             speech_output = "{} さんの勤怠ですね。勤怠の種類は出社ですか退社ですか?".format(person)
             reprompt_text = "勤怠の種類を教えてください。"
@@ -214,18 +244,25 @@ def set_type_in_session(intent, session):
             # Add attendance info DynamoDB        
             register_attendance(person, type)
 
+            # Notify to Webex teams
+            today = datetime.today()
+            date = today.strftime("%m月%d日, %H:%M")
+
+            webexteams.send_message(u"{} さんが {} に {} しました".format(person, date, type))
+
             speech_output = "{} さんの {} を登録しました。".format(person, type)
             reprompt_text = None
             should_end_session = True
 
-            return build_response(
-                session_attributes, build_video_response(
-                    card_title,
-                    speech_output,
-                    "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
-                    should_end_session
+            if type == '退社':
+                return build_response(
+                    session_attributes, build_video_response(
+                        card_title,
+                        speech_output,
+                        "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
+                        should_end_session
+                    )
                 )
-            )
         else:
             speech_output = "{} を登録ですね。誰の勤怠を登録しますか?".format(type)
             reprompt_text = "誰の勤怠を登録するか教えてください。"
@@ -241,6 +278,10 @@ def get_attendance_in_session(intent, session):
     else:
         session_attributes = {}
     should_end_session = True
+
+    data = table.scan()['Items']
+    create_csv(data)
+    upload_csv()
 
     speech_output = "Webex Teams に出力しました。"
     reprompt_text = None
