@@ -1,0 +1,9 @@
+bin
+certifi*
+chardet*
+idna*
+requests*
+requests_toolbelt*
+urllib3*
+
+serverless.yml
