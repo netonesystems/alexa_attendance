@@ -1,3 +1,6 @@
+*.pyc
+.serverless
+
 bin
 certifi*
 chardet*
