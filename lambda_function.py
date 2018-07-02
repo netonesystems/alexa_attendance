@@ -73,7 +73,7 @@ def build_response(session_attributes, response):
     }
 
 def create_csv(data):
-    f = open('/tmp/atendance.csv', 'wb')
+    f = open('/tmp/attendance.csv', 'wb')
     writer = csv.writer(f)
 
     writer.writerow(['名前', 'タイプ', '日時'])
