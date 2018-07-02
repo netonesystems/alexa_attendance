@@ -62,7 +62,7 @@ def build_video_response(title, output, source, should_end_session):
                 }
             }
         ],
-        'souldEndSession': should_end_session
+        "reprompt": None
     }
 
 def build_response(session_attributes, response):
@@ -126,8 +126,7 @@ def register_attendance(person, type):
 
 def handle_session_end_request():
     card_title = "勤怠システム"
-    speech_output = "Thank you for trying the Alexa Skills Kit sample. " \
-                    "Have a nice day! "
+    speech_output = "勤怠システムを利用いただきありがとうございます。"
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
     return build_response({}, build_speechlet_response(
@@ -164,7 +163,7 @@ def set_attendance_in_session(intent, session):
         speech_output = "{} さんの {} を登録しました。".format(person, type)
         reprompt_text = None
 
-        if type == '退社':
+        if type == "退社":
             return build_response(
                 session_attributes, build_video_response(
                     card_title,
@@ -208,15 +207,6 @@ def set_person_in_session(intent, session):
             speech_output = "{} さんの {} を登録しました。".format(person, type)
             reprompt_text = None
 
-            if type == '退社':
-                return build_response(
-                    session_attributes, build_video_response(
-                        card_title,
-                        speech_output,
-                        "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
-                        should_end_session
-                    )
-                )
         else:
             speech_output = "{} さんの勤怠ですね。勤怠の種類は出社ですか退社ですか?".format(person)
             reprompt_text = "勤怠の種類を教えてください。"
@@ -254,15 +244,6 @@ def set_type_in_session(intent, session):
             reprompt_text = None
             should_end_session = True
 
-            if type == '退社':
-                return build_response(
-                    session_attributes, build_video_response(
-                        card_title,
-                        speech_output,
-                        "https://s3-ap-northeast-1.amazonaws.com/tokyobucket/MasashiSuperDry.mp4",
-                        should_end_session
-                    )
-                )
         else:
             speech_output = "{} を登録ですね。誰の勤怠を登録しますか?".format(type)
             reprompt_text = "誰の勤怠を登録するか教えてください。"
